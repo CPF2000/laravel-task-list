@@ -61,6 +61,7 @@ Route::get('/', function ()  {
     return redirect()->route('tasks.index');
 });
 
+
 Route::get('/', function () use ($tasks) {
     //dd($tasks); // 先检查数据是否正确
     //print_r($tasks); // 再打印数据
