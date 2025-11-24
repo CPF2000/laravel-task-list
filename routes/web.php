@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\VarDumper\Caster\RedisCaster;
 
 
 class Task
@@ -55,6 +56,10 @@ $tasks = [
     '2023-03-04 12:00:00'
   ),
 ];
+
+Route::get('/', function ()  {
+    return redirect()->route('tasks.index');
+});
 
 Route::get('/', function () use ($tasks) {
     //dd($tasks); // 先检查数据是否正确
