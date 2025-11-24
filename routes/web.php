@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
 use Symfony\Component\VarDumper\Caster\RedisCaster;
 
@@ -62,14 +63,18 @@ Route::get('/', function ()  {
 });
 
 
-Route::get('/', function () use ($tasks) {
+Route::get('/tasks', function () use ($tasks) {
     //dd($tasks); // 先检查数据是否正确
     //print_r($tasks); // 再打印数据
     return view('index',['mytasks' => $tasks]);
 })->name('tasks.index');
 
-Route::get('/{id}', function ($id) {
-    return 'One Singe Task';
+Route::get('tasks/{id}', function ($id) use($tasks) {
+    $task=collect($tasks)->firstWhere('id',$id);
+    if(!$task){
+        abort(Response::HTTP_NOT_FOUND);
+    }
+    return view('show', ['task' => $task]);
 })->name('task.show');
 
 

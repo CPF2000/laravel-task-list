@@ -13,13 +13,13 @@
     
 </div>
 
-<div>
+<!-- <div>
     @forelse ($mytasks as $task)
         <p>{{ $task->long_description }}</p>
     @empty
         <h2>No Tasks Yet</h2>
     @endforelse
-</div>
+</div> -->
 @isset($name2)
     <p>My name is {{ $name2 }}</p>
 @endisset
