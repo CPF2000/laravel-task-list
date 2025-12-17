@@ -7,6 +7,10 @@
 
 @section('content')
 <div>
+    <a href="{{ route('tasks.create') }}">添加任务</a>
+</div>
+
+<div>
     @if (count($mytasks))
         @foreach ($mytasks as $task)
             <div>
@@ -17,6 +21,12 @@
         <h2>No Tasks Yet</h2>
     @endif
 </div>
+
+@if($mytasks->count())
+    <nav>
+        {{ $mytasks->links() }}
+    </nav>
+@endif
 
 @endsection
 

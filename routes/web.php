@@ -76,7 +76,8 @@ Route::get('/tasks', function () {
    //App\Models\Task::all() 获取所有任务
    //App\Models\Task::latest()->get() 获取最新任务
   //App\Models\Task::latest()->where('completed',true)->get() 获取已完成的任务
-    return view('index',['mytasks' => App\Models\Task::latest()->get()]);
+   // return view('index',['mytasks' => App\Models\Task::latest()->get()]);
+   return view('index',['mytasks' => App\Models\Task::latest()->paginate(4)]);
 })->name('tasks.index');
 
 Route::view('/tasks/create','create')->name('tasks.create');
@@ -168,6 +169,14 @@ Route::delete('/tasks/{task}', function (Task $task) {
 // Route::get('/', function () {
 //     return view('index',['name' => '陈萍峰']);
 // });
+
+Route::put('/tasks/{task}/toogle-complete', function (Task $task) {
+    // $task->completed = !$task->completed;
+    // $task->save();
+    $task->toogleComplete();
+    return redirect()->back()->with('success','任务状态已经更新成功');
+})->name('tasks.toggle-complete');
+
 
 Route::get('/hallo', function () {
     return  redirect()->route('myhello');
