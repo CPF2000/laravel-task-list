@@ -79,6 +79,9 @@ Route::get('/tasks', function () {
 
 Route::view('/tasks/create','create')->name('tasks.create');
 
+Route::get('tasks/{id}/edit', function ($id) {
+    return view('edit', ['task' => App\Models\Task::findOrFail($id)]);
+})->name('tasks.edit');
 
 // Route::get('tasks/{id}', function ($id) use($tasks) {
 //     $task=collect($tasks)->firstWhere('id',$id);
@@ -107,6 +110,22 @@ Route::post('/tasks', function (Request $request) {
   return redirect()->route('tasks.show',['id' => $task->id])->with('success','任务已经成功创建');
   //with('success','任务已经成功创建') 用于在view视图中session()->has('success')判断是否有成功信息
 })->name('tasks.store');
+
+Route::put('/tasks/{id}', function ($id,Request $request) {
+  //dd($request->all());//打印请求的数据
+  $data=$request->validate([
+    'title' => 'required|max:255',
+    'description' => ['required'],
+    'long_description' => ['required']
+  ]);
+  $task=App\Models\Task::findOrFail($id);
+  $task->title=$data['title'];
+  $task->description=$data['description'];
+  $task->long_description=$data['long_description'];
+  $task->save();
+  return redirect()->route('tasks.show',['id' => $id])->with('success','任务已经修订成功');
+  //with('success','任务已经成功创建') 用于在view视图中session()->has('success')判断是否有成功信息
+})->name('tasks.update');
 
 // Route::get('/', function () {
 //     return view('index',['name' => '陈萍峰']);
