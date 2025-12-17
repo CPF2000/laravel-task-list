@@ -2,18 +2,12 @@
 
 @section('title', 'Create Task')
 
-@section('styles')
-    <style>
-        .error-message{
-            color: red;
-            font-size: 0.8rem;
-        }
-    </style>
-@endsection
-
 @section('content')
+    <!-- 使用通用form表单模板 -->
+     @include('form')
+
     <!-- {{ $errors }} 显示验证错误信息 默认是一个空数组 -->
-    <form method="post" action="{{ route('tasks.store') }}">
+    <!-- <form method="post" action="{{ route('tasks.store') }}">
         @csrf
         <div>
             <label for="title">
@@ -44,5 +38,5 @@
         <div>
             <button type="submit">Add Task</button>
         </div>
-    </form>
+    </form> -->
 @endsection

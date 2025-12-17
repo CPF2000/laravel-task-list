@@ -2,21 +2,15 @@
 
 @section('title', 'Edit Task')
 
-@section('styles')
-    <style>
-        .error-message{
-            color: red;
-            font-size: 0.8rem;
-        }
-    </style>
-@endsection
 
 @section('content')
     <!-- {{ $errors }} 显示验证错误信息 默认是一个空数组 -->
-    <form method="post" action="{{ route('tasks.update',['id' => $task->id])}}">
-        @csrf
+    <!-- 使用@include('form') 显示验证错误信息 -->
+    @include('form',['task' => $task])
+    <!-- <form method="post" action="{{ route('tasks.update',['task' => $task->id])}}">
+        @csrf-->
         <!-- 使用 @method('PUT') 代替表单的 method="post" -->
-        @method('PUT')
+        <!-- @method('PUT')
         <div>
             <label for="title">
                 Title
@@ -46,5 +40,5 @@
         <div>
             <button type="submit">Edit Task</button>
         </div>
-    </form>
+    </form> -->
 @endsection

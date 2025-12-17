@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Requests\TaskRequest;
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Route;
@@ -79,9 +81,15 @@ Route::get('/tasks', function () {
 
 Route::view('/tasks/create','create')->name('tasks.create');
 
-Route::get('tasks/{id}/edit', function ($id) {
-    return view('edit', ['task' => App\Models\Task::findOrFail($id)]);
+//这边使用'tasks/{task}/edit'默认传递的参数为$task的主键id,传递给function自动根据主键id获取任务对象，获取不到对象就会返回404错误
+Route::get('tasks/{task}/edit', function (Task $task) {
+    return view('edit', ['task' => $task]);
 })->name('tasks.edit');
+
+
+// Route::get('tasks/{id}/edit', function ($id) {
+//     return view('edit', ['task' => App\Models\Task::findOrFail($id)]);
+// })->name('tasks.edit');
 
 // Route::get('tasks/{id}', function ($id) use($tasks) {
 //     $task=collect($tasks)->firstWhere('id',$id);
@@ -91,41 +99,71 @@ Route::get('tasks/{id}/edit', function ($id) {
 //     return view('show', ['task' => $task]);
 // })->name('task.show');
 
-Route::get('tasks/{id}', function ($id) {
-    return view('show', ['task' => App\Models\Task::findOrFail($id)]);
+Route::get('tasks/{task}', function (Task $task) {
+    return view('show', ['task' => $task]);
 })->name('tasks.show');
 
-Route::post('/tasks', function (Request $request) {
+// Route::get('tasks/{id}', function ($id) {
+//     return view('show', ['task' => App\Models\Task::findOrFail($id)]);
+// })->name('tasks.show');
+
+Route::post('/tasks', function (TaskRequest $request) {
   //dd($request->all());//打印请求的数据
-  $data=$request->validate([
-    'title' => 'required|max:255',
-    'description' => ['required'],
-    'long_description' => ['required']
-  ]);
-  $task=new App\Models\Task();
-  $task->title=$data['title'];
-  $task->description=$data['description'];
-  $task->long_description=$data['long_description'];
-  $task->save();
-  return redirect()->route('tasks.show',['id' => $task->id])->with('success','任务已经成功创建');
+  // 使用了TaskRequest就可以取消底下的验证了
+  // $data=$request->validate([
+  //   'title' => 'required|max:255',
+  //   'description' => ['required'],
+  //   'long_description' => ['required']
+  // ]);
+  // $data=$request->validated();
+  // $task=new App\Models\Task();
+  // $task->title=$data['title'];
+  // $task->description=$data['description'];
+  // $task->long_description=$data['long_description'];
+  // $task->save();
+  //使用Task::create($request->validated())直接根据请求的参数创建任务
+  $task=Task::create($request->validated());
+  return redirect()->route('tasks.show',['task' => $task->id])->with('success','任务已经成功创建');
   //with('success','任务已经成功创建') 用于在view视图中session()->has('success')判断是否有成功信息
 })->name('tasks.store');
 
-Route::put('/tasks/{id}', function ($id,Request $request) {
+Route::put('/tasks/{task}', function (Task $task,TaskRequest $request) {
   //dd($request->all());//打印请求的数据
-  $data=$request->validate([
-    'title' => 'required|max:255',
-    'description' => ['required'],
-    'long_description' => ['required']
-  ]);
-  $task=App\Models\Task::findOrFail($id);
-  $task->title=$data['title'];
-  $task->description=$data['description'];
-  $task->long_description=$data['long_description'];
-  $task->save();
-  return redirect()->route('tasks.show',['id' => $id])->with('success','任务已经修订成功');
+  // $data=$request->validate([
+  //   'title' => 'required|max:255',
+  //   'description' => ['required'],
+  //   'long_description' => ['required']
+  // ]);
+  // $data=$request->validated();
+  // $task->title=$data['title'];
+  // $task->description=$data['description'];
+  // $task->long_description=$data['long_description'];
+  // $task->save();
+  $task->update($request->validated());//$request->validated()返回的是一个数组，直接用update方法更新任务
+  return redirect()->route('tasks.show',['task' =>$task->id])->with('success','任务已经修订成功');
   //with('success','任务已经成功创建') 用于在view视图中session()->has('success')判断是否有成功信息
 })->name('tasks.update');
+
+// Route::put('/tasks/{id}', function ($id,Request $request) {
+//   //dd($request->all());//打印请求的数据
+//   $data=$request->validate([
+//     'title' => 'required|max:255',
+//     'description' => ['required'],
+//     'long_description' => ['required']
+//   ]);
+//   $task=App\Models\Task::findOrFail($id);
+//   $task->title=$data['title'];
+//   $task->description=$data['description'];
+//   $task->long_description=$data['long_description'];
+//   $task->save();
+//   return redirect()->route('tasks.show',['id' => $id])->with('success','任务已经修订成功');
+//   //with('success','任务已经成功创建') 用于在view视图中session()->has('success')判断是否有成功信息
+// })->name('tasks.update');
+
+Route::delete('/tasks/{task}', function (Task $task) {
+    $task->delete();
+    return redirect()->route('tasks.index')->with('success','任务已经删除成功');
+})->name('tasks.destroy');
 
 // Route::get('/', function () {
 //     return view('index',['name' => '陈萍峰']);
