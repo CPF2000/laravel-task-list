@@ -1,45 +1,49 @@
-@extends('layouts.app')
+@extends('layouts.app') @section('title',$task->title) @section('content')
+<div class="mb-4">
+    <a
+        class="link"
+        href="{{ route('tasks.index') }}"
+        >←后退到任务列表</a
+    >
+</div>
 
-@section('title',$task->title)
+<p class="mb-4 text-slate-700">{{ $task->description }}</p>
 
+@if($task->long_description)
+<p class="mb-4 text-slate-700">{{ $task->long_description }}</p>
+@endif
 
+<p class="mb-4 text-sm text-slate-500">
+    创建于 {{ $task->created_at->diffForHumans() }} · 更新于
+    {{ $task->updated_at->diffForHumans() }}
+</p>
+<p class="mb-4">
+    @if($task->completed)
+    <span class="font-medium text-green-500">已完成</span>
+    @else {{-- <span class="font-medium text-red-500">未完成</span> --}} @endif
+</p>
 
-@section('content')
-    <h2>{{ $task->title }}</h2>
-    <p>{{ $task->description }}</p>
+<div class="flex gap-2">
+    <a class="btn" href="{{ route('tasks.edit', ['task'=> $task->id]) }}"
+        >编辑</a
+    >
 
-    @if($task->long_description)
-        <p>{{ $task->long_description }}</p>
-    @endif
+    <form
+        method="post"
+        action="{{ route('tasks.toggle-complete', ['task'=> $task->id]) }}"
+    >
+        @csrf @method('put')
+        <button class="btn" type="submit">
+            标记为 {{ $task->completed? '未完成' : '已完成' }}
+        </button>
+    </form>
 
-    <p>Created at: {{ $task->created_at }}</p>
-    <p>Updated at: {{ $task->updated_at }}</p>
-    <div>
-        @if($task->completed)
-            <span>已完成</span>
-        @else
-            <span>未完成</span>
-        @endif
-    </div>
-
-    <div>
-        <a href="{{ route('tasks.edit', ['task'=> $task->id]) }}">编辑</a>
-    </div>
-
-    <div>
-        <form method="post" action="{{ route('tasks.toggle-complete', ['task'=> $task->id]) }}">
-            @csrf
-            @method('put')
-            <button type="submit">标记为 {{ $task->completed? '未完成' : '已完成' }}</button>
-        </form>
-    </div>
-
-
-    <div>
-        <form action="{{ route('tasks.destroy', ['task'=> $task->id]) }}" method="post">
-            @csrf
-            @method('delete')
-            <button type="submit">删除</button>
-        </form>
-    </div>
+    <form
+        action="{{ route('tasks.destroy', ['task'=> $task->id]) }}"
+        method="post"
+    >
+        @csrf @method('delete')
+        <button class="btn" type="submit">删除</button>
+    </form>
+</div>
 @endsection

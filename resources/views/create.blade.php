@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create Task')
+@section('title', '创建任务')
 
 @section('content')
     <!-- 使用通用form表单模板 -->

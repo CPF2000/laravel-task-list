@@ -6,15 +6,15 @@
  
 
 @section('content')
-<div>
-    <a href="{{ route('tasks.create') }}">添加任务</a>
-</div>
+<nav class="mb-4">
+    <a class="link" href="{{ route('tasks.create') }}">添加任务</a>
+</nav>
 
-<div>
+<div >
     @if (count($mytasks))
         @foreach ($mytasks as $task)
             <div>
-                <a href="{{ route('tasks.show', ['task' => $task->id]) }}">{{ $task->title }}</a>
+                <a @class(['line-through'=> $task->completed]) href="{{ route('tasks.show', ['task' => $task->id]) }}">{{ $task->title }}</a>
             </div>
         @endforeach
     @else
@@ -23,8 +23,8 @@
 </div>
 
 @if($mytasks->count())
-    <nav>
-        {{ $mytasks->links() }}
+    <nav class="mb-4" aria-label="任务分页">
+        {{ $mytasks->links('custom') }}
     </nav>
 @endif
 
